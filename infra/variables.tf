@@ -18,3 +18,21 @@ variable "region" {
   type = string
   default = "ca-toronto-1"
 }
+
+variable "availability_domain" {
+  type = string
+  default = "NAhl:CA-TORONTO-1-AD-1"
+}
+
+variable "compartment_ocid" {
+  type = string
+}
+
+variable "image_source_ocid" {
+  type = string 
+  default = "Oracle-Linux-7.9-2021.12.08-0"
+}
+
+variable "ssh_public_keypath" {
+  type = string
+}
