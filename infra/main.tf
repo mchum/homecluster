@@ -21,20 +21,24 @@ resource "oci_core_subnet" "private" {
 
 # Free Tier: 4 ARM-based A1 cores and 24 GB memory
 resource "oci_core_instance" "homecluster_node" {
-    display_name = "homecluster_node"
+    # Required
     availability_domain = var.availability_domain
     compartment_id = var.compartment_ocid
     shape = "VM.Standard.A1.Flex"
+    source_details {
+        source_id = var.image_source_ocid
+        source_type = "image"
+    }
+
+    # Optional
+    display_name = "homecluster_node"
     shape_config {
         ocpus = 4
         memory_in_gbs = 24
     }
     create_vnic_details {
+        assign_public_ip = false
         subnet_id = oci_core_subnet.private.id
-    }
-    source_details {
-        source_id = var.image_source_ocid
-        source_type = "image"
     }
     preserve_boot_volume = false
 }

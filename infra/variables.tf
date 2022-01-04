@@ -30,7 +30,6 @@ variable "compartment_ocid" {
 
 variable "image_source_ocid" {
   type = string 
-  default = "Oracle-Linux-7.9-2021.12.08-0"
 }
 
 variable "ssh_public_keypath" {
