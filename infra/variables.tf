@@ -31,7 +31,3 @@ variable "compartment_ocid" {
 variable "image_source_ocid" {
   type = string 
 }
-
-variable "ssh_public_keypath" {
-  type = string
-}
