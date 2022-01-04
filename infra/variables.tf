@@ -26,8 +26,15 @@ variable "availability_domain" {
 
 variable "compartment_ocid" {
   type = string
+  description = "comparment to deploy to"
 }
 
 variable "image_source_ocid" {
   type = string 
+  description = "Image OCID, use an `aarch` image"
+}
+
+variable "ssh_public_keypath" {
+  type = string
+  description = "Path to RSA public key, OCI has issue with ed25519"
 }

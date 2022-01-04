@@ -1,0 +1,12 @@
+#cloud-config
+write_files:
+  - path: "/root/bootstrap.sh"
+    permissions: "0500"
+    content: |
+      #!/bin/bash
+      set -e
+      sudo apt-get update && sudo apt-get upgrade
+      sudo curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=”644” sh -
+runcmd:
+  - bash /root/bootstrap.sh
+  - rm /root/bootstrap.sh
