@@ -6,19 +6,32 @@ provider "oci" {
     region              = var.region
 }
 
-# Free Tier: Max 2 VCNs
-resource "oci_core_vcn" "main" {
-    display_name = "vcn_main"
-    compartment_id = var.compartment_ocid
-    cidr_blocks = ["10.0.0.0/16"]
+# Networking
+module "vcn" {
+    source  = "oracle-terraform-modules/vcn/oci"
+    version = "3.1.0"
+
+    # Required
+    compartment_id                  = var.compartment_ocid
+    region                          = var.region
+    vcn_name                        = "main"
+    vcn_dns_label                   = "idkwhatthisis"
+
+    # Optional
+    lockdown_default_seclist        = false
+    create_internet_gateway         = true
+    create_nat_gateway              = true
+    enable_ipv6                     = true
+    vcn_cidrs                       = ["10.0.0.0/16"]
 }
 
 resource "oci_core_subnet" "public" {
     cidr_block = "10.0.0.0/24"
     compartment_id = var.compartment_ocid
-    vcn_id = oci_core_vcn.main.id
+    vcn_id = module.vcn.vcn_id
 }
 
+# Compute
 # Free Tier: 
 # * 4 ARM-based A1 cores and 24 GB memory
 # * 200 GB block storage, minimum 50 GB used here
