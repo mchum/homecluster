@@ -15,7 +15,6 @@ module "vcn" {
     compartment_id                  = var.compartment_ocid
     region                          = var.region
     vcn_name                        = "main"
-    vcn_dns_label                   = "idkwhatthisis"
 
     # Optional
     lockdown_default_seclist        = false
@@ -26,9 +25,13 @@ module "vcn" {
 }
 
 resource "oci_core_subnet" "public" {
-    cidr_block = "10.0.0.0/24"
-    compartment_id = var.compartment_ocid
-    vcn_id = module.vcn.vcn_id
+    cidr_block                  = "10.0.0.0/24"
+    compartment_id              = var.compartment_ocid
+    vcn_id                      = module.vcn.vcn_id
+    display_name                = "public"
+    prohibit_internet_ingress   = false
+    prohibit_public_ip_on_vnic  = false
+    route_table_id              = module.vcn.ig_route_id
 }
 
 # Compute
@@ -59,7 +62,6 @@ resource "oci_core_instance" "homecluster_node" {
     preserve_boot_volume = false
     metadata = {
         ssh_authorized_keys = file(var.ssh_public_keypath)
-        user_data           = data.template_cloudinit_config.homecluster_node.rendered
     }
 }
 
