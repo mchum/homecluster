@@ -14,7 +14,7 @@ module "vcn" {
     # Required
     compartment_id                  = var.compartment_ocid
     region                          = var.region
-    vcn_name                        = "main"
+    vcn_name                        = "eggsalad"
 
     # Optional
     lockdown_default_seclist        = false
@@ -24,6 +24,54 @@ module "vcn" {
     vcn_cidrs                       = ["10.0.0.0/16"]
 }
 
+resource "oci_core_route_table" "eggsalad" {
+    compartment_id = var.compartment_ocid
+    vcn_id = module.vcn.vcn_id
+    display_name = "Egg Salad"
+    route_rules {
+        network_entity_id = module.vcn.internet_gateway_id
+        description = "Allow access from all IPs"
+        destination = "0.0.0.0/0"
+        destination_type = "CIDR_BLOCK"
+    }
+}
+
+resource "oci_core_security_list" "eggsalad" {
+    # Required
+    compartment_id = var.compartment_ocid
+    vcn_id = module.vcn.vcn_id
+    display_name = "Egg Salad Security List"
+    egress_security_rules {
+        protocol            = "all"
+        destination         = "0.0.0.0/0"
+        destination_type    = "CIDR_BLOCK"
+    }
+    ingress_security_rules {
+        protocol    = "6"
+        source      = "0.0.0.0/0"
+        source_type = "CIDR_BLOCK"
+        description = "TCP traffic to port 22"
+        tcp_options {
+            source_port_range {
+                min = 22
+                max = 22
+            }
+        }
+    }
+    ingress_security_rules {
+        protocol    = "6"
+        source      = "0.0.0.0/0"
+        source_type = "CIDR_BLOCK"
+        description = "TCP traffic to port 6443"
+        tcp_options {
+            source_port_range {
+                min = 6443
+                max = 6443
+            }
+        }
+    }
+}
+
 resource "oci_core_subnet" "public" {
     cidr_block                  = "10.0.0.0/24"
     compartment_id              = var.compartment_ocid
@@ -31,7 +79,7 @@ resource "oci_core_subnet" "public" {
     display_name                = "public"
     prohibit_internet_ingress   = false
     prohibit_public_ip_on_vnic  = false
-    route_table_id              = module.vcn.ig_route_id
+    route_table_id              = oci_core_route_table.eggsalad.id
 }
 
 # Compute
@@ -62,6 +110,7 @@ resource "oci_core_instance" "homecluster_node" {
     preserve_boot_volume = false
     metadata = {
         ssh_authorized_keys = file(var.ssh_public_keypath)
+        user_data = filebase64(var.bootstrap_script_filepath)
     }
 }
 
