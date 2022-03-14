@@ -6,6 +6,10 @@ provider "oci" {
     region              = var.region
 }
 
+terraform {
+    required_version = ">= 1.1.7"
+}
+
 # Networking
 module "vcn" {
     source  = "oracle-terraform-modules/vcn/oci"
@@ -62,11 +66,23 @@ resource "oci_core_security_list" "eggsalad" {
         protocol    = "6"
         source      = "0.0.0.0/0"
         source_type = "CIDR_BLOCK"
-        description = "TCP traffic to port 6443"
+        description = "Kubernetes API Server"
         tcp_options {
             source_port_range {
                 min = 6443
                 max = 6443
+            }
+        }
+    }
+    ingress_security_rules {
+        protocol    = "6"
+        source      = "0.0.0.0/0"
+        source_type = "CIDR_BLOCK"
+        description = "Kubelet metrics"
+        tcp_options {
+            source_port_range {
+                min = 10250
+                max = 10250
             }
         }
     }
@@ -86,7 +102,7 @@ resource "oci_core_subnet" "public" {
 # Free Tier: 
 # * 4 ARM-based A1 cores and 24 GB memory
 # * 200 GB block storage, minimum 50 GB used here
-resource "oci_core_instance" "homecluster_node" {
+resource "oci_core_instance" "worker_node" {
     # Required
     availability_domain = var.availability_domain
     compartment_id = var.compartment_ocid
@@ -98,7 +114,7 @@ resource "oci_core_instance" "homecluster_node" {
     }
 
     # Optional
-    display_name = "homecluster_node"
+    display_name = "worker_node"
     shape_config {
         ocpus = 4
         memory_in_gbs = 24
@@ -110,11 +126,17 @@ resource "oci_core_instance" "homecluster_node" {
     preserve_boot_volume = false
     metadata = {
         ssh_authorized_keys = file(var.ssh_public_keypath)
-        user_data = filebase64(var.bootstrap_script_filepath)
+        user_data = base64encode(
+            templatefile("${path.module}/../bootstrap/ubuntu_worker.sh",
+            {
+                K3S_URL     = var.k3s_url,
+                K3S_TOKEN   = var.k3s_token,
+            })
+        )
     }
 }
 
-output "homecluster_node_public_ip" {
-    description = "Public IP of homecluster_node"
-    value = oci_core_instance.homecluster_node.public_ip
+output "worker_node_ip" {
+    description = "IP of worker node"
+    value = oci_core_instance.worker_node.public_ip
 }
