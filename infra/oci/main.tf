@@ -21,9 +21,10 @@ module "vcn" {
     vcn_name                        = "eggsalad"
 
     # Optional
+    # By default, free tier service limit for NAT Gateway is 0
     lockdown_default_seclist        = false
     create_internet_gateway         = true
-    create_nat_gateway              = true
+    create_nat_gateway              = false
     enable_ipv6                     = true
     vcn_cidrs                       = ["10.0.0.0/16"]
 }
