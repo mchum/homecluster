@@ -8,3 +8,9 @@ data:
     installCRDs: true
     nodeSelector:
       node-role.kubernetes.io/master: "true"
+    caininjector:
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
+    webhook:
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
