@@ -6,3 +6,5 @@ metadata:
 data:
   values.yaml: |
     installCRDs: true
+    nodeSelector:
+      node-role.kubernetes.io/master: "true"
