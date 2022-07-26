@@ -1,0 +1,18 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  chart:
+    spec:
+      chart: cert-manager
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack
+      version: '1.9.0'
+  interval: 1m0s
+  valuesFrom:
+  - externalSourceRef:
+      url: https://github.com/mchum/homecluster/main/infra/platform-apps/cert-manager/values.cert-manager.yaml
