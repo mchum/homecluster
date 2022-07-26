@@ -2,7 +2,7 @@
 
 ## Adding role to nodes
 ```
-kubectl node  ${node_name} kubernetes.io/role=agent
+kubectl label node  ${node_name} kubernetes.io/role=agent
 ```
 
 ## Updating k3s version
