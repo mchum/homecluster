@@ -14,5 +14,5 @@ spec:
       version: '1.9.0'
   interval: 1m0s
   valuesFrom:
-  - externalSourceRef:
-      url: https://github.com/mchum/homecluster/main/infra/platform-apps/cert-manager/values.cert-manager.yaml
+  - kind: ConfigMap
+    name: cert-manager
