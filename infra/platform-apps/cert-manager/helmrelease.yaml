@@ -3,7 +3,8 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: cert-manager
-  namespace: cert-manager
+  namespace: flux-system
+  targetNamespace: cert-manager
 spec:
   chart:
     spec:
@@ -11,6 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: jetstack
+        namespace: flux-system
       version: '1.9.0'
   interval: 1m0s
   valuesFrom:
