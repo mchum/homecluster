@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argo
+  namespace: argo
+data:
+  values.argocd.yaml: |
+    global:
+      image:
+        repository: alinbalutoiu/argocd  # ARM64 build of ArgoCD
+    apiVersionOverrides:
+      ingress: networking.k8s.io/v1 
+    configs:
+      repositories:
+        homecluster:
+          url: https://github.com/mchum/homecluster/
+    server:
+      certificate:
+        enabled: true
+        domain: argocd.mchum.fun
+        issuer:
+          kind: ClusterIssuer
+          name: selfsigned-clusterissuer
+      ingress:
+        enabled: true
+        annotations:
+          traefik.ingress.kubernetes.io/router.middlewares: "default-https-redirect@kubernetescrd"
+          traefik.ingress.kubernetes.io/router.tls: "true"
+        pathType: ImplementationSpecific
+        hosts:
+        - argocd.mchum.fun
+        tls:
+        - secretName: argocd-server-tls
+          hosts:
+          - argocd.mchum.fun
+      extraArgs:
+      - --insecure  # TLS terminated at ingress, use http backend
