@@ -4,7 +4,6 @@ kind: HelmRelease
 metadata:
   name: cert-manager
   namespace: flux-system
-  targetNamespace: cert-manager
 spec:
   chart:
     spec:
@@ -14,6 +13,7 @@ spec:
         name: jetstack
         namespace: flux-system
       version: '1.9.0'
+  targetNamespace: cert-manager
   interval: 1m0s
   valuesFrom:
   - kind: ConfigMap
