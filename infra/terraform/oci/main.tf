@@ -67,11 +67,11 @@ resource "oci_core_security_list" "eggsalad" {
         protocol    = "6"
         source      = "0.0.0.0/0"
         source_type = "CIDR_BLOCK"
-        description = "Kubernetes API Server"
+        description = "Kubelet API"
         tcp_options {
             source_port_range {
-                min = 6443
-                max = 6443
+                min = 10250
+                max = 10250
             }
         }
     }
@@ -79,11 +79,11 @@ resource "oci_core_security_list" "eggsalad" {
         protocol    = "6"
         source      = "0.0.0.0/0"
         source_type = "CIDR_BLOCK"
-        description = "Kubelet metrics"
+        description = "NodePort Services"
         tcp_options {
             source_port_range {
-                min = 10250
-                max = 10250
+                min = 30000
+                max = 32767
             }
         }
     }
@@ -127,13 +127,6 @@ resource "oci_core_instance" "worker_node" {
     preserve_boot_volume = false
     metadata = {
         ssh_authorized_keys = file(var.ssh_public_keypath)
-        user_data = base64encode(
-            templatefile("${path.module}/../bootstrap/ubuntu_worker.sh",
-            {
-                K3S_URL     = var.k3s_url,
-                K3S_TOKEN   = var.k3s_token,
-            })
-        )
     }
 }
 

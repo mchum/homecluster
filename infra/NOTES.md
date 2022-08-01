@@ -1,23 +1,32 @@
 # Notes
 
-## Issues
-Agent doesn't start with bootstrap, ssh and restart the service
+## Manual steps
+### Setup
+**Local Node**
+
+Label the local node for node selection
+```
+kubectl label node ${local_node_name} node.kubernetes.io/location=local
+```
+
+Create tailscale auth secret, auth key expires every 90 days
+TODO: Set reminders to renew that ahead of time
+```
+kubectl create namespace tailscale
+kubectl create secret generic tailscale-auth -n tailscale --from-literal="AUTH_KEY=${AUTH_KEY}"
+```
+
+**Edge Node**
+Agent doesn't start with bootstrap, ssh and restart the service. Can probably handle this in Ansible or something down the line.
 ```
 systemctl restart --now k3s-agent.service
 ```
 
-Add role to node
+Label the worker node as a worker
 ```
 kubectl label node  ${node_name} node-role.kubernetes.io/worker=true
+kubectl label node  ${node_name} node.kubernetes.io/location=edge
 ```
-
-Can't use k3s `--node-labels` because of the following error
-```
---node-labels in the 'kubernetes.io' namespace must begin with an allowed prefix (kubelet.kubernetes.io, node.kubernetes.io) or be in the specifically allowed set (beta.kubernetes.io/arch, beta.kubernetes.io/instance-type, beta.kubernetes.io/os, failure-domain.beta.kubernetes.io/region, failure-domain.beta.kubernetes.io/zone, kubernetes.io/arch, kubernetes.io/hostname, kubernetes.io/os, node.kubernetes.io/instance-type, topology.kubernetes.io/region, topology.kubernetes.io/zone)
-```
-
-> ... proxy error from 127.0.0.1:6443 while dialing 10.0.0.226:10250, code 503: 503 Service Unavailable
-Means master node can't communicate with worker node
 
 ## Notes
 Install latest k3s
