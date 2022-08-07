@@ -1,0 +1,5 @@
+---
+k3s_binary_path: /usr/local/bin/k3s
+k3s_binary_owner: root
+k3s_binary_group: root
+k3s_binary_mode: 0755

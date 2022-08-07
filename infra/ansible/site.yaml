@@ -1,0 +1,22 @@
+---
+- hosts: cluster
+  gather_facts: yes 
+  become: yes
+  roles:
+    - role: prereq
+
+- hosts: master
+  become: yes
+  roles:
+    - role: k3s/master
+
+- hosts: workers
+  become: yes
+  roles:
+    - role: k3s/worker
+
+# - hosts: cluster
+#   gather_facts: yes
+#   become: yes
+#   roles:
+#     - role: networking

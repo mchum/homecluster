@@ -1,0 +1,29 @@
+---
+# Get external IP
+- name: Get external IP from node
+  shell: echo "$(curl icanhazip.com)"
+  register: p
+
+- name: Store External IP
+  set_fact:
+    external_ip: "{{ p.stdout }}"
+
+# Binary prereqs
+- name: Download k3s binary
+  get_url:
+    url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s
+    dest: "{{ k3s_binary_path }}"
+    owner: "{{ k3s_binary_owner }}"
+    group: "{{ k3s_binary_group }}"
+    mode: "{{ k3s_binary_mode }}"
+  when: ansible_facts.architecture == "x86_64"
+
+- name: Download k3s binary
+  get_url:
+    url: https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}/k3s-arm64
+    dest: "{{ k3s_binary_path }}"
+    owner: "{{ k3s_binary_owner }}"
+    group: "{{ k3s_binary_group }}"
+    mode: "{{ k3s_binary_mode }}"
+  when:
+    - ansible_facts.architecture is search("aarch64")

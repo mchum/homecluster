@@ -1,0 +1,60 @@
+---
+# Setting up K3s server
+- name: Copy K3s service
+  template:
+    src: "k3s.service.j2"
+    dest: "{{ systemd_dir }}/k3s.service"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable and check K3s service
+  systemd:
+    name: k3s
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+
+# Getting information for worker nodes
+- name: Wait for node token
+  wait_for:
+    path: "{{ k3s_server_location }}/server/node-token"
+
+- name: Register node-token file access mode
+  stat:
+    path: "{{ k3s_server_location }}/server/node-token"
+  register: p
+
+- name: Change file access node-token
+  file:
+    path: "{{ k3s_server_location }}/server/node-token"
+    mode: "g+rx,o+rx"
+
+- name: Read node-token from master
+  slurp:
+    path: "{{ k3s_server_location }}/server/node-token"
+  register: node_token
+
+- name: Store Master node-token
+  set_fact:
+    token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
+
+- name: Restore node-token file access
+  file:
+    path: "{{ k3s_server_location }}/server/node-token"
+    mode: "{{ p.stat.mode }}"
+
+# Configuring the local kubeconfig
+- name: Copy remote rancher config to user home directory
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/{{ lookup('env', 'USER') }}/.kube/homecluster.config
+    remote_src: yes
+    owner: "{{ lookup('env', 'USER') }}"
+    mode: "u=rw,g=,o="
+
+- name: Replace localhost with IP in kube config
+  command: >-
+    kubectl config set-cluster default
+      --server=https://{{ ansible_default_ipv4.address }}:6443
+      --kubeconfig /home/{{ lookup('env', 'USER') }}/.kube/homecluster.config
