@@ -26,3 +26,4 @@ RestartSec=5s
 ExecStart=/usr/local/bin/k3s agent \
         '--node-name' 'worker.{{ node_hash.stdout }}' \
         '--node-external-ip' '{{ ansible_default_ipv4.address }}' \
+        '--node-label' 'node.kubernetes.io/role=worker' \

@@ -1,4 +1,5 @@
 ---
+# Setting up K3s on node
 - name: Generate node hash based on IP
   shell: echo "$(curl icanhazip.com)" | md5sum | head -c 12
   register: node_hash
