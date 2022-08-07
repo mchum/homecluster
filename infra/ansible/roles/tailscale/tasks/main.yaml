@@ -1,0 +1,47 @@
+---
+# Install tailscale
+- name: Tailscale auth key is required
+  fail:
+    msg: >
+      Must include tailscale_auth_key in group vars
+  when: tailscale_auth_key is not defined
+
+- name: Add tailscale package signing key
+  apt_key:
+    url: https://pkgs.tailscale.com/stable/ubuntu/focal.noarmor.gpg
+    keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
+
+- name: Add tailscale repository
+  apt_repository:
+    repo: deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/ubuntu focal main
+    filename: tailscale
+    state: present
+
+- name: Install tailscale
+  apt:
+    name: tailscale
+    state: latest
+    update_cache: yes
+
+# - name: Copy tailscale service file
+#   template:
+#     src: "tailscale.service.j2"
+#     dest: "{{ systemd_dir }}/tailscale.service"
+#     owner: root
+#     group: root
+#     mode: 0644
+
+# - name: Copy tailscale service file
+#   template:
+#     src: "tailscale.service.env.j2"
+#     dest: "{{ systemd_dir }}/tailscale.service.env"
+#     owner: root
+#     group: root
+#     mode: 0644
+
+# - name: Enable and check tailscale service
+#   systemd:
+#     name: tailscaled
+#     enabled: yes
+#     daemon_reload: yes
+#     state: restarted

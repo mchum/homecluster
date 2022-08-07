@@ -3,7 +3,8 @@
   gather_facts: yes 
   become: yes
   roles:
-    - role: prereq
+    - role: k3s/download
+    - role: tailscale
 
 - hosts: master
   become: yes
@@ -14,9 +15,3 @@
   become: yes
   roles:
     - role: k3s/worker
-
-# - hosts: cluster
-#   gather_facts: yes
-#   become: yes
-#   roles:
-#     - role: networking
