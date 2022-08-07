@@ -44,13 +44,3 @@ variable "bootstrap_script_filepath" {
   description = "Path to bootstrap script"
   default = "bootstrap/startup.sh"
 }
-
-variable "k3s_url" {
-  type = string
-  description = "URL of the K3S server for the agent to connect to"
-}
-
-variable "k3s_token" {
-  type = string
-  description = "token of the K3S server for the agent to connect to"
-}
