@@ -34,3 +34,12 @@
     else
       exit 1
     fi
+
+# Prep variables for use
+- name: Get tailscale ip to broadcast
+  shell: tailscale ip -4
+  register: tailscale_ip
+
+- name: Set node ip fact
+  set_fact:
+    node_ip: "{{ tailscale_ip.stdout }}"
