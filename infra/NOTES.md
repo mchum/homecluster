@@ -1,40 +1,22 @@
 # Notes
 
 ## Manual steps
-### Setup
-**Local Node**
+### Set up oci nodes
+1. Create the node and all resources required to facilitate it
+    ```
+    user@homecluster/infra$ cd terraform/oci
+    user@homecluster/infra/terraform/oci$ terraform apply -auto-approve
+    ...
+    worker_node_ip = "132.145.98.241"
+    ```
+2. Add this node IP to `infra/ansible/hosts.ini` under `[workers]`
 
-Label the local node for node selection
-```
-kubectl label node ${local_node_name} node.kubernetes.io/location=local
-```
-
-Create tailscale auth secret, auth key expires every 90 days
-TODO: Set reminders to renew that ahead of time
-```
-kubectl create namespace tailscale
-kubectl create secret generic tailscale-auth -n tailscale --from-literal="AUTH_KEY=${AUTH_KEY}"
-```
-
-**Edge Node**
-Agent doesn't start with bootstrap, ssh and restart the service. Can probably handle this in Ansible or something down the line.
-```
-systemctl restart --now k3s-agent.service
-```
-
-Label the worker node as a worker
-```
-kubectl label node  ${node_name} node-role.kubernetes.io/worker=true
-kubectl label node  ${node_name} node.kubernetes.io/location=edge
-```
-
-## Notes
-Install latest k3s
-```
-curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest sh -
-```
-
-K3s agent not registering because of duplicate secrets
-```
-kubectl -n kube-system delete secrets ${node_name}.node-password.k3s
-```
+### Configure the nodes
+1. Set the ansible vault password in `${HOME}/.secrets/ansible_vault_password_file`
+2. Apply the ansible playbook
+    ```
+    user@homecluster/infra$ cd ansible
+    user@homecluster/infra/ansible$ ansible-playbook site.yaml \
+        -i ./hosts.ini \
+        --vault-password-file ${HOME}/.secrets/ansible_vault_password_file
+    ```
