@@ -1,4 +1,2 @@
 # homecluster
-Home cluster setup
-
-Main idea is to link my raspberry pi with free tier cloud resources using Kubernetes.
+Sort of a misnomer, the majority of this cluster is not at home
