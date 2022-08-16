@@ -48,13 +48,19 @@
 - name: Copy remote rancher config to user home directory
   copy:
     src: /etc/rancher/k3s/k3s.yaml
-    dest: /home/{{ lookup('env', 'USER') }}/.kube/homecluster.config
+    dest: /home/{{ ansible_user }}/.kube/config
     remote_src: yes
-    owner: "{{ lookup('env', 'USER') }}"
+    owner: "{{ ansible_user }}"
     mode: "u=rw,g=,o="
 
 - name: Replace localhost with IP in kube config
   command: >-
     kubectl config set-cluster default
       --server=https://{{ ansible_default_ipv4.address }}:6443
-      --kubeconfig /home/{{ lookup('env', 'USER') }}/.kube/homecluster.config
+      --kubeconfig /home/{{ ansible_user }}/.kube/config
+
+- name: Fetch the kubeconfig
+  fetch:
+    src: /home/{{ ansible_user }}/.kube/config
+    dest: /home/{{ lookup('env', 'USER')}}/.kube/config
+    flat: yes
