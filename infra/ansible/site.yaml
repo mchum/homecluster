@@ -5,6 +5,7 @@
   roles:
     - role: k3s/download
     - role: tailscale
+    - role: flannel/download
 
 - hosts: master
   become: yes

@@ -29,4 +29,3 @@ ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s server \
     '--node-ip' '{{ node_ip }}' \
     '--disable' 'traefik' \
-    '--disable' 'coredns' \

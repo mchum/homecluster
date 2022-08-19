@@ -1,0 +1,27 @@
+- name: Ensure /opt/bin directory exists
+  file:
+    path: /opt/bin
+    state: directory
+    owner: root
+    group: root
+    mode: 755
+
+# Download binary
+- name: Download flanneld binary
+  get_url:
+    url: https://github.com/flannel-io/flannel/releases/download/{{ flanneld_version }}/flanneld-arm64
+    dest: "{{ flanneld_binary_path }}"
+    owner: "{{ flanneld_binary_owner }}"
+    group: "{{ flanneld_binary_group }}"
+    mode: "{{ flanneld_binary_mode }}"
+  when: ansible_facts.architecture == "x86_64"
+
+- name: Download flanneld binary
+  get_url:
+    url: https://github.com/flannel-io/flannel/releases/download/{{ flanneld_version }}/flanneld-arm64
+    dest: "{{ flanneld_binary_path }}"
+    owner: "{{ flanneld_binary_owner }}"
+    group: "{{ flanneld_binary_group }}"
+    mode: "{{ flanneld_binary_mode }}"
+  when:
+    - ansible_facts.architecture is search("aarch64")

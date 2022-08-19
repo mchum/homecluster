@@ -1,0 +1,5 @@
+---
+flanneld_binary_path: /opt/bin/flanneld
+flanneld_binary_owner: root
+flanneld_binary_group: root
+flanneld_binary_mode: 0755

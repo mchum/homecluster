@@ -1,6 +1,7 @@
 ---
 # Configuration
 k3s_version: v1.24.3+k3s1
+flanneld_version: v0.19.1
 ansible_user: ubuntu
 systemd_dir: /etc/systemd/system
 
