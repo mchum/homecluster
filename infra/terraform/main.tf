@@ -1,24 +1,17 @@
-provider "oci" {
-    tenancy_ocid        = var.tenancy_ocid
-    user_ocid           = var.user_ocid
-    private_key_path    = var.private_key_path
-    fingerprint         = var.fingerprint
-    region              = var.region
-}
-
-terraform {
-    required_version = ">= 1.1.7"
+locals {
+  project = "fruitsalad"
+  operating_system = "Canonical Ubuntu"
+  shape = "VM.Standard.A1.Flex"
 }
 
 # Networking
 module "vcn" {
     source  = "oracle-terraform-modules/vcn/oci"
-    version = "3.1.0"
+    version = "3.6.0"
 
     # Required
     compartment_id                  = var.compartment_ocid
-    region                          = var.region
-    vcn_name                        = "eggsalad"
+    vcn_name                        = local.project
 
     # Optional
     # By default, free tier service limit for NAT Gateway is 0
@@ -29,10 +22,10 @@ module "vcn" {
     vcn_cidrs                       = ["10.0.0.0/16"]
 }
 
-resource "oci_core_route_table" "eggsalad" {
+resource "oci_core_route_table" "this" {
     compartment_id = var.compartment_ocid
     vcn_id = module.vcn.vcn_id
-    display_name = "Egg Salad"
+    display_name = "Allow Internet Egress"
     route_rules {
         network_entity_id = module.vcn.internet_gateway_id
         description = "Allow access from all IPs"
@@ -41,11 +34,11 @@ resource "oci_core_route_table" "eggsalad" {
     }
 }
 
-resource "oci_core_security_list" "eggsalad" {
+resource "oci_core_security_list" "this" {
     # Required
     compartment_id = var.compartment_ocid
     vcn_id = module.vcn.vcn_id
-    display_name = "Egg Salad Security List"
+    display_name = "Kubernetes Node Access"
     egress_security_rules {
         protocol            = "all"
         destination         = "0.0.0.0/0"
@@ -96,26 +89,44 @@ resource "oci_core_subnet" "public" {
     display_name                = "public"
     prohibit_internet_ingress   = false
     prohibit_public_ip_on_vnic  = false
-    route_table_id              = oci_core_route_table.eggsalad.id
+    route_table_id              = oci_core_route_table.this.id
 }
 
 # Compute
 # Free Tier: 
 # * 4 ARM-based A1 cores and 24 GB memory
 # * 200 GB block storage, minimum 50 GB used here
-resource "oci_core_instance" "worker_node" {
-    # Required
-    availability_domain = var.availability_domain
+# Note: Oracle reclaims idle compute resources: https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm#compute__idleinstances
+
+# Using the Ubuntu Image for Simplicity
+data "oci_core_images" "ubuntu" {
     compartment_id = var.compartment_ocid
-    shape = "VM.Standard.A1.Flex"
+    
+    # Operating System Details
+    operating_system = local.operating_system
+    operating_system_version = 22.04
+    shape = local.shape
+    sort_by = "TIMECREATED"
+    sort_order = "DESC"
+}
+
+data "oci_identity_availability_domains" "available" {
+    compartment_id = var.compartment_ocid
+}
+
+resource "oci_core_instance" "node" {
+    # Required
+    compartment_id = var.compartment_ocid
+    availability_domain = data.oci_identity_availability_domains.available.availability_domains[0].name
+    shape = local.shape
     source_details {
-        source_id = var.image_source_ocid
+        source_id = data.oci_core_images.ubuntu.images[0].id
         source_type = "image"
         boot_volume_size_in_gbs = 50
     }
 
     # Optional
-    display_name = "worker_node"
+    display_name = "node"
     shape_config {
         ocpus = 4
         memory_in_gbs = 24
@@ -127,10 +138,11 @@ resource "oci_core_instance" "worker_node" {
     preserve_boot_volume = false
     metadata = {
         ssh_authorized_keys = file(var.ssh_public_keypath)
+        image_name          = data.oci_core_images.ubuntu.images[0].display_name
     }
 }
 
-output "worker_node_ip" {
-    description = "IP of worker node"
-    value = oci_core_instance.worker_node.public_ip
+output "node_ip" {
+    description = "IP of node"
+    value = oci_core_instance.node.public_ip
 }
