@@ -141,8 +141,3 @@ resource "oci_core_instance" "node" {
         image_name          = data.oci_core_images.ubuntu.images[0].display_name
     }
 }
-
-output "node_ip" {
-    description = "IP of node"
-    value = oci_core_instance.node.public_ip
-}
