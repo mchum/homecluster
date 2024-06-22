@@ -27,5 +27,5 @@ ExecStartPre=/bin/sh -xc '! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s server \
-    '--node-ip' '{{ node_ip }}' \
+    '--node-ip' '{{ external_ip }}' \
     '--disable' 'traefik' \
