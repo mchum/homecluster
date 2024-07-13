@@ -7,7 +7,7 @@ data:
   values.argocd.yaml: |
     global:
       image:
-        repository: argoproj/argocd  # ARM64 build of ArgoCD
+        repository: argoproj/argocd
     apiVersionOverrides:
       ingress: networking.k8s.io/v1 
     configs:
@@ -17,7 +17,7 @@ data:
     server:
       certificate:
         enabled: true
-        domain: argocd.mchum.fun
+        domain: argocd.mchum.ca
         issuer:
           kind: ClusterIssuer
           name: selfsigned-clusterissuer
@@ -28,10 +28,10 @@ data:
           traefik.ingress.kubernetes.io/router.tls: "true"
         pathType: ImplementationSpecific
         hosts:
-        - argocd.mchum.fun
+        - argocd.mchum.ca
         tls:
         - secretName: argocd-server-tls
           hosts:
-          - argocd.mchum.fun
+          - argocd.mchum.ca
       extraArgs:
       - --insecure  # TLS terminated at ingress, use http backend
