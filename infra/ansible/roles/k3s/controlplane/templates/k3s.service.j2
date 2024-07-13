@@ -28,4 +28,5 @@ ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s server \
     '--node-ip' '{{ external_ip }}' \
+    '--tls-san' '{{ ansible_default_ipv4.address }}' \
     '--disable' 'traefik' \

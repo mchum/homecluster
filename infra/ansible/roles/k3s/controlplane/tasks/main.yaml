@@ -45,6 +45,12 @@
     mode: "{{ p.stat.mode }}"
 
 # Configuring the local kubeconfig
+- name: Create .kube directory if it does not exist
+  file:
+    path: /home/{{ ansible_user }}/.kube
+    state: directory
+    mode: '0755'
+
 - name: Copy remote rancher config to user home directory
   copy:
     src: /etc/rancher/k3s/k3s.yaml
@@ -55,7 +61,7 @@
 
 - name: Replace localhost with IP in kube config
   command: >-
-    kubectl config set-cluster default
+    k3s kubectl config set-cluster default
       --server=https://{{ ansible_default_ipv4.address }}:6443
       --kubeconfig /home/{{ ansible_user }}/.kube/config
 
