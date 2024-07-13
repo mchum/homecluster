@@ -8,3 +8,8 @@ Using for configuring nodes to
 ```
 ansible-playbook --vault-password-file ~/.secrets/ansible_vault_password_file -i ./hosts.ini site.yaml --ask-become-pass
 ```
+
+## Encrypting/Decrypting/Editing the vault
+```
+ansible-vault view --vault-password-file ~/.secrets/ansible_vault_password_file group_vars/all/vault
+```
