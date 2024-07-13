@@ -1,0 +1,24 @@
+---
+# This is probably risky and should probably have a better way to do this
+- name: Download flux installer
+  get_url:
+    url: https://fluxcd.io/install.sh
+    dest: "{{ flux_install_script }}"
+
+- name: Permit file execution
+  file:
+    dest: "{{ flux_install_script }}"
+    mode: a+x
+
+- name: Execute flux installer
+  shell: "{{ flux_install_script }}"
+
+- name: Test for bash completion line in bashrc
+  shell: grep -c "{{ flux_bash_completion_line }}" {{ ansible_env.HOME }}/.bashrc || true
+  register: grep
+
+- name: Add flux bash completion
+  lineinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    line: "{{ flux_bash_completion_line }}"
+  when: grep.stdout == "0"

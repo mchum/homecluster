@@ -6,5 +6,5 @@ Using for configuring nodes to
 
 ## Run playbook
 ```
-ansible-playbook --vault-password-file ~/.secrets/ansible_vault_password_file -i ./hosts.ini site.yaml
+ansible-playbook --vault-password-file ~/.secrets/ansible_vault_password_file -i ./hosts.ini site.yaml --ask-become-pass
 ```

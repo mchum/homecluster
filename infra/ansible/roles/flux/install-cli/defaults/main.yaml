@@ -1,0 +1,3 @@
+---
+flux_install_script: /tmp/flux_install.sh
+flux_bash_completion_line: "command -v flux >/dev/null && . <(flux completion bash)"

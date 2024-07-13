@@ -2,8 +2,8 @@
 Setting up the Kubernetes cluster using as many free tier resources from cloud providers as I can because I am cheap and don't like paying for stuff.
 
 ## Table of Contents
-* `terraform/` - Contains all cloud infrastructure provisioning
-* `ansible/` - Contains configuration for all nodes in the cluster
+* `terraform/` - Provisions nodes in cloud infrastructure
+* `ansible/` - Configures nodes into a K3s cluster, and bootstraps the platform using Flux CLI
 * `platform-apps/` - Flux-managed Kubernetes/Helm configurations
 * `docs/` - Notes for myself because I'm forgetful
 

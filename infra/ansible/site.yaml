@@ -1,16 +1,25 @@
 ---
-- hosts: cluster
-  gather_facts: yes 
-  become: yes
+- name: Install K3s on all nodes
+  hosts: cluster
+  gather_facts: true
+  become: true
   roles:
     - role: k3s/download
     # - role: tailscale
     # - role: flannel/download
 
-- hosts: controlplane
-  become: yes
+- name: Perform controlplane-specific tasks
+  hosts: controlplane
+  become: true
   roles:
     - role: k3s/controlplane
+
+- name: Use localhost to bootstrap the cluster
+  hosts: localhost
+  become: true
+  roles:
+    - role: flux/install-cli
+    - role: flux/bootstrap-cluster
 
 # - hosts: workernode
 #   become: yes
