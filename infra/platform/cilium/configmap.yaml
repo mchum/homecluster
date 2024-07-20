@@ -9,5 +9,8 @@ data:
       enabled: true
     operator:
       replicas: 1
+    ingressController:
+      enabled: true
+      loadBalancerMode: shared
     gatewayAPI:
       enabled: true
