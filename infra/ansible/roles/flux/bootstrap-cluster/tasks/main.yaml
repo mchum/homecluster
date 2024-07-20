@@ -1,30 +1,34 @@
 ---
-- name: Check prerequisites
-  shell: flux check --pre
+- name: Install Cilium
+  shell: |
+    repository="$(grep "url" {{ playbook_dir }}/../platform/cilium/repository.yaml | awk '{print $2}')"
+    version="$(grep "version" {{ playbook_dir }}/../platform/cilium/helmrelease.yaml | awk '{print $2}' | tr -d "\'")"
+    helm repo add cilium "${repository}"
+    helm upgrade --install cilium cilium/cilium --namespace kube-system --version "${version}"
 
-## Assumes SSH
+# Assumes repo is cloned using SSH
 - name: Parse the git url from the remote origin url
   shell: |
     origin="$(git config --get remote.origin.url | sed "s/:/\//")"
     echo "ssh://${origin%.*}"
   register: git_url
 
+- name: Check prerequisites
+  shell: flux check --pre
+
 - name: Create flux-system namespace
-  kubernetes.core.k8s:
-    name: flux-system
-    api_version: v1
-    kind: Namespace
-    state: present
+  shell: kubectl create namespace flux-system || true
 
 - name: Create deploy key
   shell: |
-    deploy_key="$(mktemp)"
-    origin="$(git config --get remote.origin.url | sed "s/:/\//")"
     flux create secret git flux-system \
       --url '{{ git_url.stdout }}' \
       --ssh-key-algorithm=ecdsa \
-      --ssh-ecdsa-curve=p384 > "${deploy_key}"
-    cat "${deploy_key}"
+      --ssh-ecdsa-curve=p384
+  register: deploy_key
+
+- debug:
+    msg: "{{ deploy_key.stdout_lines }}"
 
 - name: IMPORTANT  
   pause:
