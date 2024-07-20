@@ -23,9 +23,7 @@ data:
           name: selfsigned-clusterissuer
       ingress:
         enabled: true
-        annotations:
-          traefik.ingress.kubernetes.io/router.middlewares: "default-https-redirect@kubernetescrd"
-          traefik.ingress.kubernetes.io/router.tls: "true"
+        ingressClassName: cilium
         pathType: ImplementationSpecific
         hosts:
         - argocd.mchum.ca
