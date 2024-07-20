@@ -1,2 +1,40 @@
 ---
-# TODO
+- name: Check prerequisites
+  shell: flux check --pre
+
+## Assumes SSH
+- name: Parse the git url from the remote origin url
+  shell: |
+    origin="$(git config --get remote.origin.url | sed "s/:/\//")"
+    echo "ssh://${origin%.*}"
+  register: git_url
+
+- name: Create flux-system namespace
+  kubernetes.core.k8s:
+    name: flux-system
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Create deploy key
+  shell: |
+    deploy_key="$(mktemp)"
+    origin="$(git config --get remote.origin.url | sed "s/:/\//")"
+    flux create secret git flux-system \
+      --url '{{ git_url.stdout }}' \
+      --ssh-key-algorithm=ecdsa \
+      --ssh-ecdsa-curve=p384 > "${deploy_key}"
+    cat "${deploy_key}"
+
+- name: IMPORTANT  
+  pause:
+    prompt: Add deploy key to github repo before continuing, or bootstrap will fail
+
+# https://fluxcd.io/flux/installation/bootstrap/generic-git-server/#ssh-agent
+- name: Bootstrap flux using ssh agent
+  shell: |
+    origin="$(git config --get remote.origin.url | sed "s/:/\//")"
+    flux bootstrap git --silent \
+    --url '{{ git_url.stdout }}' \
+    --branch main \
+    --path infra/platform

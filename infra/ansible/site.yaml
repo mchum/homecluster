@@ -14,11 +14,17 @@
   roles:
     - role: k3s/controlplane
 
-- name: Use localhost to bootstrap the cluster
+- name: Install Flux CLI
   hosts: localhost
   become: true
   roles:
     - role: flux/install-cli
+
+- name: Bootstrap the cluster
+  hosts: localhost
+  become: true
+  become_user: mchum
+  roles:
     - role: flux/bootstrap-cluster
 
 # - hosts: workernode

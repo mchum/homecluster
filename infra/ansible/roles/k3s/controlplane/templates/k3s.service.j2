@@ -27,6 +27,7 @@ ExecStartPre=/bin/sh -xc '! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s server \
-    '--node-ip' '{{ external_ip }}' \
+    '--node-external-ip' '{{ external_ip }}' \
     '--tls-san' '{{ ansible_default_ipv4.address }}' \
+    '--advertise-address' '{{ ansible_default_ipv4.address }}' \
     '--disable' 'traefik' \
