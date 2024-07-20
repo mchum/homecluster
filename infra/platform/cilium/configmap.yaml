@@ -7,5 +7,7 @@ data:
   values.yaml: |
     crds:
       enabled: true
+    operator:
+      replicas: 1
     gatewayAPI:
       enabled: true
