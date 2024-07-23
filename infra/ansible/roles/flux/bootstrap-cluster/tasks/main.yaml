@@ -26,6 +26,7 @@
       --ssh-key-algorithm=ecdsa \
       --ssh-ecdsa-curve=p384
   register: deploy_key
+  when: operation == "refresh"
 
 - debug:
     msg: "{{ deploy_key.stdout_lines }}"
