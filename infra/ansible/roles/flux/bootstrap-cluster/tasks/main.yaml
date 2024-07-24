@@ -1,8 +1,8 @@
 ---
 - name: Install Cilium
   shell: |
-    repository="$(grep "url" {{ playbook_dir }}/../platform/cilium/repository.yaml | awk '{print $2}')"
-    version="$(grep "version" {{ playbook_dir }}/../platform/cilium/helmrelease.yaml | awk '{print $2}' | tr -d "\'")"
+    repository="$(grep "url" {{ playbook_dir }}/../../services/cilium/repository.yaml | awk '{print $2}')"
+    version="$(grep "version" {{ playbook_dir }}/../../services/cilium/helmrelease.yaml | awk '{print $2}' | tr -d "\'")"
     helm repo add cilium "${repository}"
     helm upgrade --install cilium cilium/cilium --namespace kube-system --version "${version}"
 
@@ -42,4 +42,4 @@
     flux bootstrap git --silent \
     --url '{{ git_url.stdout }}' \
     --branch main \
-    --path infra/platform
+    --path services
