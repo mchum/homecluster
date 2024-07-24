@@ -8,6 +8,17 @@ data:
     crds:
       enabled: true
     kubeProxyReplacement: true
+    k8sServiceHost: raspi.router.lan
+    hostPort:
+      enabled: true
+    hostServices:
+      enabled: true
+    bgp:
+      enabled: true
+    bgpControlPlane:
+      enabled: true
+    nodeIPAM:
+      enabled: true
     operator:
       replicas: 1
     ingressController:
