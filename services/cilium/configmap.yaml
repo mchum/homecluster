@@ -8,5 +8,7 @@ data:
     crds:
       enabled: true
     kubeProxyReplacement: true
+    nodeIPAM:
+      enabled: true
     operator:
       replicas: 1
