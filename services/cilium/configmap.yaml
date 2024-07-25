@@ -7,5 +7,6 @@ data:
   values.yaml: |
     crds:
       enabled: true
+    kubeProxyReplacement: true
     operator:
       replicas: 1
