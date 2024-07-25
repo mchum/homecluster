@@ -12,7 +12,7 @@ data:
     hostPort:
       enabled: true
     hostServices:
-      enabled: true
+      enabled: false
     bgp:
       enabled: false
     bgpControlPlane:
