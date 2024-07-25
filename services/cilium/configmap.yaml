@@ -27,4 +27,4 @@ data:
     gatewayAPI:
       enabled: true
     nodeInit:
-      enabled: true
+      enabled: false
