@@ -7,24 +7,5 @@ data:
   values.yaml: |
     crds:
       enabled: true
-    kubeProxyReplacement: false
-    egressMasqueradeInterfaces: eth0
-    hostPort:
-      enabled: true
-    hostServices:
-      enabled: false
-    bgp:
-      enabled: false
-    bgpControlPlane:
-      enabled: false
-    nodeIPAM:
-      enabled: true
     operator:
       replicas: 1
-    ingressController:
-      enabled: true
-      loadBalancerMode: shared
-    gatewayAPI:
-      enabled: false
-    nodeInit:
-      enabled: false
