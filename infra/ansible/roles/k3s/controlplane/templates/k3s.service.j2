@@ -31,6 +31,7 @@ ExecStart=/usr/local/bin/k3s server \
     '--tls-san' '{{ ansible_default_ipv4.address }}' \
     '--advertise-address' '{{ ansible_default_ipv4.address }}' \
     '--disable' 'traefik' \
+    '--disable' 'servicelb' \
     '--disable' 'local-storage' \
     '--disable-cloud-controller' \
     '--disable-network-policy' \
