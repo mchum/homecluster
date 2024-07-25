@@ -25,6 +25,6 @@ data:
       enabled: true
       loadBalancerMode: shared
     gatewayAPI:
-      enabled: true
+      enabled: false
     nodeInit:
       enabled: false
