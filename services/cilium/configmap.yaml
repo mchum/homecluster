@@ -9,14 +9,15 @@ data:
       enabled: true
     kubeProxyReplacement: true
     k8sServiceHost: raspi.router.lan
+    egressMasqueradeInterfaces: eth0
     hostPort:
       enabled: true
     hostServices:
       enabled: true
     bgp:
-      enabled: true
+      enabled: false
     bgpControlPlane:
-      enabled: true
+      enabled: false
     nodeIPAM:
       enabled: true
     operator:
@@ -25,4 +26,6 @@ data:
       enabled: true
       loadBalancerMode: shared
     gatewayAPI:
+      enabled: true
+    nodeInit:
       enabled: true
