@@ -10,5 +10,8 @@ data:
     kubeProxyReplacement: true
     nodeIPAM:
       enabled: true
+    envoy:
+      image:
+        repository: mattcwc/cilium-envoy-gperftools
     operator:
       replicas: 1
