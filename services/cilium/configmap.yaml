@@ -16,3 +16,7 @@ data:
         digest: sha256:d6cb0c8129e6a1d947cc87214fbb90671d24cf9f5f57c746c1cd4ddbbef526aa
     operator:
       replicas: 1
+    ingressController:
+      enabled: true
+      default: true
+      loadbalancerMode: shared
