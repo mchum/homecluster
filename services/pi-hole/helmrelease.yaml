@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: mojo2600
         namespace: flux-system
-      version: '0.14.7'
+      version: '2.26.1'
   interval: 1m0s
   valuesFrom:
   - kind: ConfigMap
