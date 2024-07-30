@@ -10,3 +10,8 @@ data:
       policy: None
       nameservers:
         - 1.1.1.1
+    ingress:
+      enabled: true
+      path: /pihole
+      hosts:
+        - raspi.router.lan
