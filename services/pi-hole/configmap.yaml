@@ -5,13 +5,18 @@ metadata:
   namespace: flux-system
 data:
   values.yaml: |
-    podDnsConfig:
-      enabled: true
-      policy: None
-      nameservers:
-        - 1.1.1.1
-    ingress:
-      enabled: true
-      path: /pihole
-      hosts:
-        - raspi.router.lan
+    DNS1: 1.1.1.1
+    DNS2: 8.8.8.8
+    adlists:
+      - https://raw.githubusercontent.com/PolishFiltersTeam/KADhosts/master/KADhosts.txt
+      - https://raw.githubusercontent.com/FadeMind/hosts.extras/master/add.Spam/hosts
+      - https://v.firebog.net/hosts/static/w3kbl.txt
+      - https://adaway.org/hosts.txt
+      - https://v.firebog.net/hosts/AdguardDNS.txt
+      - https://v.firebog.net/hosts/Admiral.txt
+      - https://v.firebog.net/hosts/Easyprivacy.txt
+      - https://v.firebog.net/hosts/Prigent-Ads.txt
+      - https://v.firebog.net/hosts/RPiList-Malware.txt
+      - https://v.firebog.net/hosts/RPiList-Phishing.txt
+      - https://raw.githubusercontent.com/anudeepND/blacklist/master/adservers.txt
+      - https://raw.githubusercontent.com/anudeepND/blacklist/master/facebook.txt
